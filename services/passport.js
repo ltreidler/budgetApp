@@ -9,6 +9,8 @@ const User = mongoose.model('users');
 //create a cookie with an id inside it
 passport.serializeUser((user, done) => {
     //takes in mongo id, not google id
+    console.log('serializing');
+    console.log(user);
     done(null, user.id);
   });
   
@@ -16,7 +18,7 @@ passport.serializeUser((user, done) => {
   passport.deserializeUser((id, done) => {
     User.findById(id)
         .then(user => {
-            done(null, user);
+            done(null, createBasicUser(user));
         });
   });
 
@@ -27,18 +29,28 @@ passport.use(new GoogleStrategy({
     proxy: true
     }, 
     async (accessToken, refreshToken, profile, done) => {
-        const existingUser = await User.findOne({googleId: profile.id});
-        if(existingUser) {
-            done(null, existingUser);
+        let user = await User.findOne({googleId: profile.id});
+        if(!user) {
+            user = await new User({
+                googleId: profile.id,
+                email: profile.emails[0].value,
+                name: {first: profile.name.givenName, last: profile.name.familyName}
+            }).save();
         }
-        const user = await new User({
-            googleId: profile.id,
-            email: profile.emails[0].value,
-            name: {First: profile.name.givenName, Last: profile.name.familyName}
-        }).save();
-        done(null, user);
+        done(null, createBasicUser(user));
     }
 ));
+
+function createBasicUser({_id, name, thisMonth, total, email}){
+    const basicUser = {
+        id: _id,
+        name,
+        thisMonth,
+        total,
+        email
+    };
+    return(basicUser);
+}
 
 
 // const userSchema = new Schema({

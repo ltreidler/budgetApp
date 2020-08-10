@@ -6,7 +6,7 @@ const {itemSchema, subscriptionSchema, incomeSchema, budgetSchema, accountSchema
 const userSchema = new Schema({
     googleId: String,
     email: String,
-    name: {First: String, Last: String},
+    name: {first: String, last: String},
     items: [itemSchema],
     subscriptions: [subscriptionSchema],
     incomes: [incomeSchema],

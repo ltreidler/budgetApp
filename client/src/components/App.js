@@ -3,29 +3,57 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 
-import Landing from './Landing';
-import Header from './Header';
+import Analytics from './Analytics';
+import Budget from './Budget';
 import Dashboard from './Dashboard';
+import Header from './Header';
+import Landing from './Landing';
+import Loader from './Loader';
+import Profile from './Profile';
+import Transactions from './Transactions';
+import ProfileForm from './newUserForm/ProfileForm';
 
 class App extends Component {
   componentDidMount() {
     this.props.fetchUser();
   }
+
+  renderContent(){
+    switch(this.props.user){
+      case null:
+        return (<Loader />);
+      case false:
+        return (<Landing />);
+      default:
+        return(
+            <div>
+              <Route exact path="/" component={Landing} />
+              <Route exact path="/dash" component={Dashboard} />
+              <Route exact path="/budget" component={Budget} />
+              <Route exact path="/analytics" component={Analytics} />
+              <Route exact path="/profile" component={Profile} />
+              <Route exact path="/transactions" component={Transactions} />
+              <Route exact path="/newUser" component={ProfileForm} />
+            </div>
+        );
+    }
+  }
   
   render(){
     return (
-      <div className="App">
-        <BrowserRouter>
+      <BrowserRouter>
+        <div className="App">
           <Header />
-          <div>
-            <Route exact path="/" component={Landing} />
-            <Route exact path="/dash" component={Dashboard} />
-          </div>
-        </BrowserRouter>
-      </div>
+          {this.renderContent()}
+        </div>
+      </BrowserRouter>
     );
   } 
 }
 
-export default connect(null, actions)(App);
+function mapStateToProps({ user }) {
+  return { user }; //aka {user: user}
+}
+
+export default connect(mapStateToProps, actions)(App);
 

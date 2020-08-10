@@ -26,7 +26,10 @@ class Header extends Component {
             default:
                 return(
                     <div>
-                        <li><Link to='/dash'>Dashboard</Link></li>
+                        <li><Link to='/transactions'>Transactions</Link></li>
+                        <li><Link to='/budget'>Budget</Link></li>
+                        <li><Link to='/analytics'>Analytics</Link></li>
+                        <li><Link to='/profile'>Profile</Link></li>
                         <li><a href='/api/logout'>Logout</a></li>
                     </div>
                 );
@@ -39,7 +42,7 @@ class Header extends Component {
            <div>
               <nav>
                 <div className="nav-wrapper container">
-                    <Link to="/" className="brand-logo">Budget My Life</Link>
+                    <Link to={this.props.user ? '/dash' : '/'} className="brand-logo">Budget My Life</Link>
                     <a href="#" data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons">menu</i></a>
                     <ul className="right hide-on-med-and-down">
                         {this.renderContent()}
