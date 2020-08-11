@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+
 class SetupForm extends Component {
     
     
@@ -8,25 +9,17 @@ class SetupForm extends Component {
         const {first, last, email} = this.props;
         return (
             <div className="row container">
-                <h5 className="header center teal-text text-lighten-2">Please check your name and email</h5>
+                <h5 className="header center teal-text text-lighten-2">Let's set up</h5>
                 <form className="col s12">
                     <div className="row">
                         <div className="input-field col s6">
-                            <input placeholder="Placeholder" id="first_name" type="text" className="validate" value={first}/>
+                            <input id="accountName" type="text" className="validate" value=""/>
+                            <label htmlFor="account">Account Name</label>
                         </div>
                         <div className="input-field col s6">
-                            <input id="last_name" type="text" className="validate" value={last}/>
+                            <input id="accountVal" type="number" className="validate" value=""/>
+                            <label htmlFor="account">Account Value</label>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="input-field col s12">
-                        <input id="email" type="email" value={email}className="validate"/>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <button className="btn waves-effect waves-light right" type="submit" name="action">Submit
-                            <i className="material-icons right">send</i>
-                        </button>
                     </div>
                 </form>
             </div>

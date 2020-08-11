@@ -12,6 +12,7 @@ import Loader from './Loader';
 import Profile from './Profile';
 import Transactions from './Transactions';
 import ProfileForm from './newUserForm/ProfileForm';
+import SetupForm from './newUserForm/SetupForm';
 
 class App extends Component {
   componentDidMount() {
@@ -34,6 +35,7 @@ class App extends Component {
               <Route exact path="/profile" component={Profile} />
               <Route exact path="/transactions" component={Transactions} />
               <Route exact path="/newUser" component={ProfileForm} />
+              <Route exact path="/setup" component={SetupForm} />
             </div>
         );
     }
