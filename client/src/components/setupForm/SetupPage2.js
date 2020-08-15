@@ -20,26 +20,33 @@ class SetupPage2 extends Component {
         );
     }
 
+    renderIncome() {
+        return (
+            <div className="row">
+                <div className="input-field col s8">
+                    <Field key="incomeName" component={SetupField} type="text" label="Income Name" name="incomeName" />
+                </div>
+                <div className="input-field col s4">
+                    <Field key="incomeValue" component={SetupField} type="number" label="Income Value" name="incomeValue" placeholder={0}/>
+                </div>
+            </div>
+        );
+    }
+
     render() {
-        const { history, setupUser, formValues, onPrevPage, first } = this.props;
+        const { onPrevPage, first, setupUser, history, formValues, handleSubmit } = this.props;
         return (
             <div className="container">
             <h5 className="header center teal-text text-lighten-2">Thank you, {first}. </h5>
             <h5 className="header center teal-text text-lighten-2">Now please add your banking details</h5>
-            <form className="col s12">
+            <form className="col s12" onSubmit={handleSubmit(() => setupUser(formValues, history))}>
                 
                 {this.renderAccount()}
-
-                <div className="row">
-                    <div className="input-field col s4">
-                        <Field key="debt" component={SetupField} type="number" label="Total Debt" name="debt" placeholder={0}/>
-                    </div>
-
-                    
-                </div>
+                {this.renderIncome()}
+    
                 <div className="row container">
                     <button className="btn-flat left white-text yellow" type="button" onClick={onPrevPage}>Back</button>
-                    <button className="teal btn-flat right white-text" type="button" onClick={() => setupUser(formValues, history)}>
+                    <button className="teal btn-flat right white-text" type="submit">
                         Next
                         <i className="material-icons right">done</i>
                     </button>
@@ -52,17 +59,20 @@ class SetupPage2 extends Component {
     }
 }
 
-function validate({accountName, accountValue, debt}) {
+function validate({accountName, accountValue, incomeValue, incomeName}) {
     const errors = {};
     //errors automatically passed to corresponding fields
     if(!accountName) {
-        errors.accountName = "You must provide a first name";
+        errors.accountName = "You must provide an account name";
     }
-    if(!accountValue && accountValue !== 0){
+    if(!incomeName) {
+        errors.incomeName = "You must provide an income name";
+    }
+    if(!accountValue || accountValue === 0){
         errors.accountValue = "You must provide a value";
     }
-    if(!debt && debt !== 0){
-        errors.debt = "You must provide a value";
+    if(!incomeValue || incomeValue === 0){
+        errors.incomeValue = "You must provide a value";
     }
     //if empty, reduxForm assumes everything is valid
     return errors;

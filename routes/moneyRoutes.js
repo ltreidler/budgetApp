@@ -7,6 +7,41 @@ const Money = mongoose.model('Money');
 
 module.exports = (app) => {
     
+    app.post('/api/newItem', async (req, res) => {
+        //receives label, date, category, value
+        console.log(req.body);
+        const {date, category, value, label} = req.body;
+        const parsedDate = new Date(date);
+        const money = await Money.findById(req.user.moneyID);
+        money.items.push({date, category, value, label});
+        money.accounts[0].value += value;
+        if(new Date().getMonth() === parsedDate.getMonth()) {
+            try{
+                money.budget.categories.find(el => el.label == category).spent += value;
+            } catch {
+                money.budget.categories.find(el => el.label == 'Misc').spent += value;
+            }
+            
+            money.thisMonth += value;
+        }
+        money.save();
+        res.send(money);
+    })
+
+
+    app.get('/api/clearMoneys', async (req, res) => {
+        await Money.deleteMany({});
+        console.log('deleted moneys');
+        res.redirect('/');
+    });
+
+    app.get('/api/clearUsers', async (req, res) => {
+        await User.deleteMany({});
+        console.log('deleted users');
+        res.redirect('/');
+    });
+
+
     app.get('/api/money', async (req, res) => {
         //only call this is the user exists
         const {_id} = req.user;
@@ -25,10 +60,8 @@ module.exports = (app) => {
     
     app.post('/api/setupUser', async (req, res) => {
 
-        //NEXT TASK: edit the user in mongoose
-
         //get all relevant details
-        const {first, last, email: eNew, accountValue, accountName} = req.body;
+        const {first, last, email: eNew, accountValue, accountName, incomeValue, incomeName} = req.body;
         const newName = {first, last};
         const {_id: userID} = req.user;
 
@@ -38,10 +71,9 @@ module.exports = (app) => {
                 userID,
                 items: {},
                 bills: {},
-                incomes: {label: "base", value: 0},
-                //for some reason this is showing an object id, not a model
                 accounts: [{label: accountName, value: accountValue}],
-                budget: {total: 0, categories: [{}] }
+                dateLastOpened: new Date(),
+                incomes: [{label: incomeName, value: incomeValue}]
             }).save();
             //get the object ID from the new money object
             const {_id: moneyID} = money;
@@ -54,7 +86,7 @@ module.exports = (app) => {
                     moneyID
                 })).save();
     
-            res.send(user);
+            res.send({user, money});
         } catch (err) {
             res.send(err);
         }
@@ -62,27 +94,6 @@ module.exports = (app) => {
     });
 }
 
-// const userSchema = new Schema({
-//     googleId: String,
-//     email: String,
-//     name: {first: String, last: String},
-//     thisMonth: {type: Number, default: 0},
-//     budgetTotal: {type: Number, default: 0},
-//     total: {type: Number, default: 0},
-//     moneyID: {type: mongoose.Schema.Types.ObjectId, ref: 'Money', default: null},
-//     new: {type: Boolean, default: true}
-// });
-
-
-
-// const moneySchema = new Schema({
-//     user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-//     items: [{itemSchema}],
-//     bills: [{billSchema}],
-//     incomes: [{incomeSchema}],
-//     accounts: [{accountSchema}],
-//     budget: budgetSchema
-// });
 
 
 // {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 
@@ -19,7 +19,6 @@ class App extends Component {
   componentDidMount() {
     this.props.fetchUser()
       .then(() => {
-        console.log('user fetched');
         if(this.props.user){
           this.props.fetchMoney();
         }
@@ -28,28 +27,33 @@ class App extends Component {
 
   renderContent(){
     let {user, money} = this.props;
-    // if(user === null || money === null) {
-    //   return (<Loader />);
-    // } else if (user === false) {
-    //   return (<Landing />);
-    // }
     if(user === false){
-      return (<Landing />);
+      return <Landing />;
     } else if (money === null) {
-      return (<Loader />)
+      return (<Loader />);
     } else if(money === false) {
-      return (<Route exact path="/setup" component={Setup} />);
+      return <Setup />;
     }
     return(
-            <div>
-              <Route exact path="/" component={Landing} />
+            <Switch>
               <Route exact path="/dash" component={Dashboard} />
               <Route exact path="/budget" component={Budget} />
               <Route exact path="/analytics" component={Analytics} />
               <Route exact path="/profile" component={Profile} />
               <Route exact path="/transactions" component={Transactions} />
               <Route exact path="/newItem" component={NewItem} />
-            </div>
+              <Route exact path="/setup" render={() => {
+                if(money === false) {
+                  console.log('user is new');
+                  return <Setup />;
+                } else {
+                  return <Redirect to="/" />
+                }
+              }} />
+              <Route path="/" render={() => {
+                return (user ? <Redirect to="/dash"/> : <Redirect to="/" />);
+              }} />
+            </Switch>
       );
     }
   

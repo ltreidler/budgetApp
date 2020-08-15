@@ -25,7 +25,7 @@ class Setup extends Component {
         if(this.state.page === 1) {
             return <SetupPage1  onNextPage={() => this.next()}/>
         } 
-        return <SetupPage2 onSubmit={this.submit} onPrevPage={() => this.prev()}/>
+        return <SetupPage2 onPrevPage={() => this.prev()}/>
     }
     
     render() {
@@ -36,8 +36,6 @@ class Setup extends Component {
         )
     }
 }
-
-
 
 
 export default (reduxForm({

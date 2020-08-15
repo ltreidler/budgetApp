@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const budgetSchema = require('./Budget');
+const {budgetSchema, defaultBudget} = require('./Budget');
 
 const itemSchema = new Schema({
     label: String,
@@ -15,7 +15,7 @@ const billSchema = new Schema({
     end: Date,
     category: String,
     value: Number,
-    frequency: String
+    frequency: {type: String, default: 'monthly'}
 });
 
 const incomeSchema = new Schema({
@@ -35,8 +35,9 @@ const moneySchema = new Schema({
     bills: [billSchema],
     incomes: [incomeSchema],
     accounts: [accountSchema],
-    budget: budgetSchema,
-    thisMonth: {type: Number, default: 0}
+    budget: {type: budgetSchema, default: defaultBudget},
+    thisMonth: {type: Number, default: 0},
+    dateLastOpened: Date
 });
 
 

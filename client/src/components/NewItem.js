@@ -13,8 +13,19 @@ class NewItem extends Component {
        label: "",
        date: new Date(),
        category: "",
-       value: null,
-       cost: true
+       value: null
+    //    cost: true
+   }
+
+   renderDropdown() {
+       //finish this up
+       const categoryArray = this.props.categories.map(({label}) => label);
+       return (
+            <div className="col s6">
+                <Dropdown options={categoryArray} onChange={this.onSelect} value={this.state.category} placeholder="Select an option" />
+            </div>
+       );
+
    }
 
    dateChange = date => this.setState({date});
@@ -25,7 +36,10 @@ class NewItem extends Component {
 
    categoryChange = ({value}) => this.setState({category: value});
 
-   submit = () => console.log(this.state);
+   submit = () => {
+       const {postItem, history} = this.props;
+       postItem(this.state, history);
+   }
 
    makeInc = () => this.setState({cost: false});
 
@@ -45,20 +59,20 @@ class NewItem extends Component {
                         <input id="value" type="number" onChange={this.valueChange}/>
                         <label htmlFor="value">Cost/Deposit</label>
                     </div>
-                    <div className="input-field col s3">
+                    {/* <div className="input-field col s3">
                         <p>
                             <label>
-                                <input name="group1" type="radio" onChange={this.makeCost}/>
+                                <input name="group1" type="radio" onClick={this.makeCost}/>
                                 <span>+</span>
                             </label>
                         </p>
                         <p>
                             <label>
-                                <input name="group1" type="radio" onChange={this.makeInc}/>
+                                <input name="group1" type="radio" onClick={this.makeInc}/>
                                 <span>-</span>
                             </label>
                         </p>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="row">
                     <div className="col s6">
@@ -67,9 +81,7 @@ class NewItem extends Component {
                             value={this.state.date}
                         />
                     </div>
-                    <div className="col s6">
-                        <Dropdown options={["1", "2", "3"]} onChange={this.onSelect} value={"1"} placeholder="Select an option" />
-                    </div>
+                    {this.renderDropdown()}
                 </div>
                 <button className="btn waves-effect waves-light" type="button" name="action" onClick={this.submit}>Submit
                     <i className="material-icons right">send</i>

@@ -7,10 +7,12 @@ export const fetchUser = () => async (dispatch) => {
 };
 
 export const setupUser = (values, history) => async (dispatch) => {
+    console.log('setting up user');
     const res = await axios.post('/api/setupUser', values);
     //adjust this so that it 1) sends the data 2) X the backend sends that to Mongo (both to update the user and the finances) 3) sends back the user 4) send that to the userReducer by dispatching FETCH_USER
     history.push('/budget');
-    dispatch({ type: FETCH_USER, payload: res.data});
+    dispatch({ type: FETCH_USER, payload: res.data.user});
+    dispatch({type: FETCH_MONEY, payload: res.data.money});
 }
 
 export const fetchMoney = () => async (dispatch) => {
@@ -19,7 +21,7 @@ export const fetchMoney = () => async (dispatch) => {
 }
 
 export const postItem = (values, history) => async (dispatch) => {
-    const res = await axios.get('/api/newItem');
+    const res = await axios.post('/api/newItem', values);
     history.push('/dash');
     dispatch({type: FETCH_MONEY, payload: res.data});
 }
