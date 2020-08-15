@@ -5,9 +5,8 @@ const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 const passport = require('passport');
 require('./services/passport');
-require('./models/Schemas');
 
-mongoose.connect(keys.mongoURI, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(keys.mongoURI, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const app = express();
 
@@ -23,6 +22,7 @@ app.use(bodyParser.json());
 
 require('./routes/authRoutes')(app);
 require('./routes/routes')(app);
+require('./routes/moneyRoutes')(app);
 
 if(process.env.NODE_ENV === 'production') {
     //express will serve up production assets

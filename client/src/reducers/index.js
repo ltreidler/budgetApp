@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import userReducer from './userReducer';
-import { reducer as reduxForm } from 'redux-form';
+import moneyReducer from './moneyReducer';
+import { reducer as formReducer } from 'redux-form';
 
 export default combineReducers({
     user: userReducer,
-    form: reduxForm
+    form: formReducer,
+    money: moneyReducer
 });

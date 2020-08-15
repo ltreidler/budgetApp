@@ -1,4 +1,6 @@
 const passport = require('passport');
+const userIsNew = require('../middlewares/userIsNew');
+const updateThisMonth = require('../middlewares/updateThisMonth');
 
 module.exports = (app) => {
     app.get('/auth/google', passport.authenticate('google', {
@@ -7,11 +9,9 @@ module.exports = (app) => {
     );
     
     app.get('/auth/google/callback',
-        passport.authenticate('google'),
-        (req, res) => {
-            res.redirect('/dash');
-        }
-    );
+        passport.authenticate('google'), 
+        userIsNew,
+        (req, res) => res.send(user));
 
     app.get('/api/current_user', (req,res) => {
         res.send(req.user);

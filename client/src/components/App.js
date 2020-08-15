@@ -11,22 +11,36 @@ import Landing from './Landing';
 import Loader from './Loader';
 import Profile from './Profile';
 import Transactions from './Transactions';
-import ProfileForm from './newUserForm/ProfileForm';
-import SetupForm from './newUserForm/SetupForm';
+// import ProfileForm from './newUserForm/ProfileForm';
+import Setup from './setupForm/Setup';
+import NewItem from './NewItem';
 
 class App extends Component {
   componentDidMount() {
-    this.props.fetchUser();
+    this.props.fetchUser()
+      .then(() => {
+        console.log('user fetched');
+        if(this.props.user){
+          this.props.fetchMoney();
+        }
+      })
   }
 
   renderContent(){
-    switch(this.props.user){
-      case null:
-        return (<Loader />);
-      case false:
-        return (<Landing />);
-      default:
-        return(
+    let {user, money} = this.props;
+    // if(user === null || money === null) {
+    //   return (<Loader />);
+    // } else if (user === false) {
+    //   return (<Landing />);
+    // }
+    if(user === false){
+      return (<Landing />);
+    } else if (money === null) {
+      return (<Loader />)
+    } else if(money === false) {
+      return (<Route exact path="/setup" component={Setup} />);
+    }
+    return(
             <div>
               <Route exact path="/" component={Landing} />
               <Route exact path="/dash" component={Dashboard} />
@@ -34,12 +48,11 @@ class App extends Component {
               <Route exact path="/analytics" component={Analytics} />
               <Route exact path="/profile" component={Profile} />
               <Route exact path="/transactions" component={Transactions} />
-              <Route exact path="/newUser" component={ProfileForm} />
-              <Route exact path="/setup" component={SetupForm} />
+              <Route exact path="/newItem" component={NewItem} />
             </div>
-        );
+      );
     }
-  }
+  
   
   render(){
     return (
@@ -53,8 +66,8 @@ class App extends Component {
   } 
 }
 
-function mapStateToProps({ user }) {
-  return { user }; //aka {user: user}
+function mapStateToProps({ user, money }) {
+  return { user, money }; //aka {user: user}
 }
 
 export default connect(mapStateToProps, actions)(App);

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const keys = require('../config/keys');
 require('../models/User');
 
-const User = mongoose.model('users');
+const User = mongoose.model('User');
 
 //create a cookie with an id inside it
 passport.serializeUser((user, done) => {
@@ -18,7 +18,7 @@ passport.serializeUser((user, done) => {
   passport.deserializeUser((id, done) => {
     User.findById(id)
         .then(user => {
-            done(null, createBasicUser(user));
+            done(null, user);
         });
   });
 
@@ -37,34 +37,15 @@ passport.use(new GoogleStrategy({
                 name: {first: profile.name.givenName, last: profile.name.familyName}
             }).save();
         }
-        done(null, createBasicUser(user));
+        done(null, user);
     }
 ));
-
-function createBasicUser({_id, name, thisMonth, total, email}){
-    const basicUser = {
-        id: _id,
-        name,
-        thisMonth,
-        total,
-        email
-    };
-    return(basicUser);
-}
-
 
 // const userSchema = new Schema({
 //     googleId: String,
 //     email: String,
-//     name: {First: String, Last: String},
-//     items: [itemSchema],
-//     subscriptions: [subscriptionSchema],
-//     incomes: [incomeSchema],
-//     budget: budgetSchema,
-//     accounts: [accountsSchema],
-//     bills: [billSchema],
-//     debt: Number,
-//     thisMonth: Number,
-//     total: Number,
-//     second: Boolean
+//     name: {first: String, last: String},
+//     thisMonth: {type: Number, default: 0},
+//     budgetTotal: {type: Number, default: 0},
+//     total: {type: Number, default: 0}
 // });

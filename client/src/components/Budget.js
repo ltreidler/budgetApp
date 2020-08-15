@@ -14,7 +14,7 @@ class Budget extends Component {
 }
 
 function mapStateToProps({user}) {
-
+    return user;
 }
  
 export default connect(mapStateToProps)(Budget);
