@@ -14,6 +14,7 @@ import Transactions from './Transactions';
 // import ProfileForm from './newUserForm/ProfileForm';
 import Setup from './setupForm/Setup';
 import NewItem from './NewItem';
+import Footer from './Footer';
 
 class App extends Component {
   componentDidMount() {
@@ -35,6 +36,7 @@ class App extends Component {
       return <Setup />;
     }
     return(
+        <div>
             <Switch>
               <Route exact path="/dash" component={Dashboard} />
               <Route exact path="/budget" component={Budget} />
@@ -54,6 +56,8 @@ class App extends Component {
                 return (user ? <Redirect to="/dash"/> : <Redirect to="/" />);
               }} />
             </Switch>
+            <Footer />
+          </div>
       );
     }
   

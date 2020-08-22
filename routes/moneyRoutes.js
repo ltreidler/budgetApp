@@ -1,9 +1,21 @@
 const mongoose = require('mongoose');
 require('../models/Money');
 require('../models/Money');
+const _ = require('lodash');
 
 const User = mongoose.model('User');
 const Money = mongoose.model('Money');
+
+const updateThisMonth = async (moneyID) => {
+    const money = await Money.findById(moneyID);
+    _.each(money.items, ({category, value, date}) => {
+        if(date.getMonth() == new Date.getMonth()){
+            money.budget.categories.find(el => el.label == category).spent += value;
+            money.thisMonth += value;
+        }
+    })
+    money.save();
+}
 
 module.exports = (app) => {
     
@@ -21,7 +33,6 @@ module.exports = (app) => {
             } catch {
                 money.budget.categories.find(el => el.label == 'Misc').spent += value;
             }
-            
             money.thisMonth += value;
         }
         money.save();
@@ -50,6 +61,9 @@ module.exports = (app) => {
             .populate('moneyID');
 
         if(money) {
+            if(money.dateLastOpened.getMonth() != new Date().getMonth()){
+                await updateThisMonth(money._id);
+            }
             res.send(money);
         } else {
             //if the money doesn't exist, that means the user is new

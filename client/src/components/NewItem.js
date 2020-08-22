@@ -7,14 +7,17 @@ import DatePicker from 'react-date-picker';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
  
+
+//SOME SORT OF ERROR HERE! FIX IT
 class NewItem extends Component {
    
    state = {
        label: "",
        date: new Date(),
        category: "",
-       value: null
-    //    cost: true
+       value: null,
+       expense: true,
+       text: "Enter a new item"
    }
 
    renderDropdown() {
@@ -22,7 +25,7 @@ class NewItem extends Component {
        const categoryArray = this.props.categories.map(({label}) => label);
        return (
             <div className="col s6">
-                <Dropdown options={categoryArray} onChange={this.onSelect} value={this.state.category} placeholder="Select an option" />
+                <Dropdown options={categoryArray} onChange={this.onSelect} value={this.state.category} placeholder="Select an option"/>
             </div>
        );
 
@@ -36,14 +39,30 @@ class NewItem extends Component {
 
    categoryChange = ({value}) => this.setState({category: value});
 
-   submit = () => {
-       const {postItem, history} = this.props;
-       postItem(this.state, history);
+   validate = () => {
+        const {value, label, category} = this.state;  
+        if(value <= 0 || label === "" || !category){
+           return false;
+        } 
+        return true;
    }
 
-   makeInc = () => this.setState({cost: false});
+   submit = async () => {
+        let {expense, value, label, date, category} = this.state;
+        if(this.validate()){
+            if(expense) {
+                value = -Math.abs(value);
+            } else {
+                value = Math.abs(value);
+            }
+            const {postItem, history} = this.props;
+            postItem({value, label, date, category}, history);
+        } else {
+            this.setState({text: 'Please input valid entries'});
+        }
+   }
 
-   makeCost = () => this.setState({cost: true});
+   toggleValue = () => this.state.expense ? this.setState({expense: false}) : this.setState({expense: true});
 
    onSelect = ({value}) => this.setState({category: value});
 
@@ -52,27 +71,27 @@ class NewItem extends Component {
             <form className="col s12">
                 <div className="row">
                     <div className="input-field col s6">
-                        <input id="label" type="text" onChange={this.labelChange}/>
+                        <input id="label" type="text" onChange={this.labelChange} required/>
                         <label htmlFor="label">Item Name</label>
                     </div>
                     <div className="input-field col s3">
-                        <input id="value" type="number" onChange={this.valueChange}/>
+                        <input id="value" type="number" onChange={this.valueChange} required/>
                         <label htmlFor="value">Cost/Deposit</label>
                     </div>
-                    {/* <div className="input-field col s3">
+                    <div className="input-field col s3">
                         <p>
                             <label>
-                                <input name="group1" type="radio" onClick={this.makeCost}/>
-                                <span>+</span>
+                                <input name="group1" type="radio" onChange={this.toggleValue} defaultChecked/>
+                                <span>Expense</span>
                             </label>
                         </p>
                         <p>
                             <label>
-                                <input name="group1" type="radio" onClick={this.makeInc}/>
-                                <span>-</span>
+                                <input name="group1" type="radio" onClick={this.toggleValue}/>
+                                <span>Income</span>
                             </label>
                         </p>
-                    </div> */}
+                    </div>
                 </div>
                 <div className="row">
                     <div className="col s6">
@@ -96,7 +115,7 @@ class NewItem extends Component {
        return (
         <div className="container">
             <h5 className="header center teal-text text-lighten-2">
-                Enter a new item</h5>
+                {this.state.text}</h5>
             <br></br>
             {this.renderFields()}
         </div>
