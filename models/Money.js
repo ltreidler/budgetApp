@@ -36,7 +36,9 @@ const moneySchema = new Schema({
     incomes: [incomeSchema],
     accounts: [accountSchema],
     budget: {type: budgetSchema, default: defaultBudget},
-    thisMonth: {type: Number, default: 0},
+    spentThisMonth: {type: Number, default: 0},
+    earnedThisMonth: {type: Number, default: 0},
+    totalIncome: {type: Number},
     dateLastOpened: Date
 });
 

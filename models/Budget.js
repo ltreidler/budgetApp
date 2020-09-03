@@ -3,8 +3,9 @@ const { Schema } = mongoose;
 
 const categorySchema = new Schema({
     label: String,
-    max: {type: Number, default: 0},
-    spent: {type: Number, default: 0}
+    max: {type: Number, default: 10},
+    spent: {type: Number, default: 0},
+    color: String
 });
 
 
@@ -14,13 +15,13 @@ const budgetSchema = new Schema({
 });
 
 const defaultBudget = {
-    total: 0, 
+    total: 50, 
     categories:[ 
-    {label: "Rent"},
-    {label: "Utilities"},
-    {label: "Groceries"},
-    {label: "Gas"},
-    {label: "Misc"}
+    {label: "Rent", color: "red"},
+    {label: "Utilities", color: "purple"},
+    {label: "Groceries", color: "blue"},
+    {label: "Gas", color: "green"},
+    {label: "Misc", color: "orange"}
 ]}
 
 

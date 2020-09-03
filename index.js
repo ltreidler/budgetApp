@@ -23,6 +23,7 @@ app.use(bodyParser.json());
 require('./routes/authRoutes')(app);
 require('./routes/routes')(app);
 require('./routes/moneyRoutes')(app);
+require('./routes/budgetRoutes')(app);
 
 if(process.env.NODE_ENV === 'production') {
     //express will serve up production assets

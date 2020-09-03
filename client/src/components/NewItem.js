@@ -23,11 +23,14 @@ class NewItem extends Component {
    renderDropdown() {
        //finish this up
        const categoryArray = this.props.categories.map(({label}) => label);
-       return (
-            <div className="col s6">
-                <Dropdown options={categoryArray} onChange={this.onSelect} value={this.state.category} placeholder="Select an option"/>
-            </div>
-       );
+       if(this.state.expense) {
+            return (
+                <div className="col s6">
+                    <Dropdown options={categoryArray} onChange={this.onSelect} value={this.state.category} placeholder="Select an option"/>
+                </div>
+        );
+       }
+       
 
    }
 
@@ -40,8 +43,8 @@ class NewItem extends Component {
    categoryChange = ({value}) => this.setState({category: value});
 
    validate = () => {
-        const {value, label, category} = this.state;  
-        if(value <= 0 || label === "" || !category){
+        const {value, label, category, expense} = this.state;  
+        if(value <= 0 || label === "" || (expense && category == "")){
            return false;
         } 
         return true;

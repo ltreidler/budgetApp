@@ -15,6 +15,7 @@ import Transactions from './Transactions';
 import Setup from './setupForm/Setup';
 import NewItem from './NewItem';
 import Footer from './Footer';
+import EditBudget from './EditBudget';
 
 class App extends Component {
   componentDidMount() {
@@ -44,6 +45,7 @@ class App extends Component {
               <Route exact path="/profile" component={Profile} />
               <Route exact path="/transactions" component={Transactions} />
               <Route exact path="/newItem" component={NewItem} />
+              <Route exact path="/editBudget" component={EditBudget} />
               <Route exact path="/setup" render={() => {
                 if(money === false) {
                   console.log('user is new');
@@ -56,7 +58,6 @@ class App extends Component {
                 return (user ? <Redirect to="/dash"/> : <Redirect to="/" />);
               }} />
             </Switch>
-            <Footer />
           </div>
       );
     }

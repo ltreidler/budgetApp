@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 require('../models/Money');
-require('../models/Money');
 const _ = require('lodash');
 
 const User = mongoose.model('User');
@@ -8,10 +7,17 @@ const Money = mongoose.model('Money');
 
 const updateThisMonth = async (moneyID) => {
     const money = await Money.findById(moneyID);
+    _.each(money.incomes, ({value}) => {
+        money.earnedThisMonth += value;
+    })
     _.each(money.items, ({category, value, date}) => {
         if(date.getMonth() == new Date.getMonth()){
-            money.budget.categories.find(el => el.label == category).spent += value;
-            money.thisMonth += value;
+            if(category) {
+                money.budget.categories.find(el => el.label == category).spent -= value;
+                money.spentThisMonth -= value;
+            } else {
+                money.earnedThisMonth += value;
+            }
         }
     })
     money.save();
@@ -28,15 +34,21 @@ module.exports = (app) => {
         money.items.push({date, category, value, label});
         money.accounts[0].value += value;
         if(new Date().getMonth() === parsedDate.getMonth()) {
-            try{
-                money.budget.categories.find(el => el.label == category).spent += value;
-            } catch {
-                money.budget.categories.find(el => el.label == 'Misc').spent += value;
+            if(category) {
+                try{
+                    money.budget.categories.find(el => el.label == category).spent -= value;
+                } catch {
+                    money.budget.categories.find(el => el.label == 'Misc').spent -= value;
+                }
+                money.spentThisMonth -= value;
+            } else {
+                money.earnedThisMonth += value;
             }
-            money.thisMonth += value;
+            
         }
         money.save();
         res.send(money);
+        
     })
 
 
@@ -64,6 +76,8 @@ module.exports = (app) => {
             if(money.dateLastOpened.getMonth() != new Date().getMonth()){
                 await updateThisMonth(money._id);
             }
+            money.dateLastOpened = new Date();
+            money.save();
             res.send(money);
         } else {
             //if the money doesn't exist, that means the user is new
@@ -87,8 +101,10 @@ module.exports = (app) => {
                 bills: {},
                 accounts: [{label: accountName, value: accountValue}],
                 dateLastOpened: new Date(),
-                incomes: [{label: incomeName, value: incomeValue}]
+                incomes: [{label: incomeName, value: incomeValue}],
+                totalIncome: incomeValue
             }).save();
+
             //get the object ID from the new money object
             const {_id: moneyID} = money;
     
