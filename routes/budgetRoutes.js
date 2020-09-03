@@ -27,6 +27,7 @@ module.exports = (app) => {
         const {moneyID} = req.user;
         const money = await Money.findById(moneyID);
         money.budget.categories.push({label: category, max, color});
+        money.budget.total += max;
         money.save();
         res.send(money);
     })
