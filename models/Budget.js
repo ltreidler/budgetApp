@@ -16,11 +16,11 @@ const budgetSchema = new Schema({
 
 const defaultBudget = {
     total: 50, 
-    categories:[ 
+    categories:[
     {label: "Rent", color: "red"},
     {label: "Utilities", color: "purple"},
     {label: "Groceries", color: "blue"},
-    {label: "Gas", color: "green"},
+    {label: "Gas", color: "indigo"},
     {label: "Misc", color: "orange"}
 ]}
 

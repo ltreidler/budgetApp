@@ -6,7 +6,8 @@ const itemSchema = new Schema({
     label: String,
     date: Date,
     category: String,
-    value: Number
+    value: Number,
+    place: String
 });
 
 const billSchema = new Schema({

@@ -17,7 +17,8 @@ class NewItem extends Component {
        category: "",
        value: null,
        expense: true,
-       text: "Enter a new item"
+       text: "Enter a new item",
+       place: ""
    }
 
    renderDropdown() {
@@ -25,8 +26,8 @@ class NewItem extends Component {
        const categoryArray = this.props.categories.map(({label}) => label);
        if(this.state.expense) {
             return (
-                <div className="col s6">
-                    <Dropdown options={categoryArray} onChange={this.onSelect} value={this.state.category} placeholder="Select an option"/>
+                <div className="col s3">
+                    <Dropdown options={categoryArray} onChange={this.onSelect} value={this.state.category} placeholder="Choose a category"/>
                 </div>
         );
        }
@@ -40,18 +41,20 @@ class NewItem extends Component {
 
    labelChange = ({target: {value}}) => this.setState({label: value});
 
+   placeChange = ({target: {value}}) => this.setState({place: value});
+
    categoryChange = ({value}) => this.setState({category: value});
 
    validate = () => {
-        const {value, label, category, expense} = this.state;  
-        if(value <= 0 || label === "" || (expense && category == "")){
+        const {value, label, category, expense, place} = this.state;  
+        if(value <= 0 || label === "" || (expense && category == "") || place === ""){
            return false;
         } 
         return true;
    }
 
    submit = async () => {
-        let {expense, value, label, date, category} = this.state;
+        let {expense, value, label, date, category, place} = this.state;
         if(this.validate()){
             if(expense) {
                 value = -Math.abs(value);
@@ -59,7 +62,7 @@ class NewItem extends Component {
                 value = Math.abs(value);
             }
             const {postItem, history} = this.props;
-            postItem({value, label, date, category}, history);
+            postItem({value, label, date, category, place}, history);
         } else {
             this.setState({text: 'Please input valid entries'});
         }
@@ -97,11 +100,15 @@ class NewItem extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col s6">
+                    <div className="col s3">
                         <DatePicker 
                             onChange={this.dateChange}
                             value={this.state.date}
                         />
+                    </div>
+                    <div className="input-field col s6">
+                        <input id="place" type="text" onChange={this.placeChange} required/>
+                        <label htmlFor="place">Place</label>
                     </div>
                     {this.renderDropdown()}
                 </div>

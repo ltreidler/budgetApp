@@ -13,42 +13,55 @@ class Transactions extends Component {
         const {money} = this.props;
         const colorArray = money.budget.categories.map(({color, label}) => {return {color, label}});
 
-        const markup = money.items.map(({label, date, category, value}) => {
+        const markup = money.items.map(({label, date, category, value, place}) => {
             if(label && date && value) {
                 let color = "orange";
                 console.log(category);
+                console.log(category);
                 _.each(colorArray, el => {
-                    console.log(el.label);
                     if(el.label == category) {
                         color = el.color;
                     }
                 });
-                return (
-                    <div>
-                        {this.transaction(color, label, value, date, category)}
-                    </div>
-                )
+                if(!category) {
+                    color = "green";
+                }
+                return this.transaction(color, label, value, date, category, place);
             }
         });
         return markup;
    }
 
-   transaction(color, label, value, date, category) {
-       return (
-            <div className="row" >
-                <div className="col s12 m12">
-                <div className={"card-panel "+color}>
-                    <span className="white-text">{label}: ${value} on {date} of category {category}</span>
-                </div>
-                </div>
-            </div>);
+   transaction(color, label, value, date, category, place) {
+       date = new Date(date);
+       return (<tr className={color + " lighten-2"}>
+                    <td>{label}</td>
+                    <td>${Math.abs(value)}</td>
+                    <td>{date.toLocaleDateString()}</td>
+                    <td>{category}</td>
+                    <td>{place}</td>
+                </tr>);
    }
    
     render() {
         //choose color based on 
         return (
             <div className="container">
-                {this.renderTransactions()}
+                    <table className="striped">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Item Price</th>
+                                <th>Item Date</th>
+                                <th>Item Category</th>
+                                <th>Place</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.renderTransactions()}
+                        </tbody>
+                    </table>
+                
             </div>
         )
         

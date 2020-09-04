@@ -23,7 +23,7 @@ class Budget extends Component {
         return (
         <div className="row">
             <div className="col s12 m12">
-              <div className={"card-panel "+color} 
+              <div className={"card-panel "+color+" lighten-2"} 
                     onClick={() => {this.setState({edited: {max, category: label}, original: {max, category: label}})}}>
                 <span className="white-text">{label}: {spent} / {max} </span>
                 <Line percent={percent} strokeWidth="3" trailWidth="3" strokeColor="#ffffff" trailColor="#000000"/>
@@ -85,7 +85,7 @@ class Budget extends Component {
             </div>
             <div className="row">
                 <div className="col s12 m12">
-                <div className="card-panel yellow">
+                <div className="card-panel green lighten">
                     <span className="white-text">Income: {earnedThisMonth} / {totalIncome} </span>
                     <Line percent={(earnedThisMonth/totalIncome)*100} strokeWidth="3" trailWidth="3" strokeColor="#ffffff" trailColor="#000000"/>
                 </div>

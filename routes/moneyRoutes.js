@@ -28,13 +28,13 @@ module.exports = (app) => {
     app.post('/api/newItem', async (req, res) => {
         //receives label, date, category, value
         console.log(req.body);
-        const {date, category, value, label} = req.body;
+        const {date, category, value, label, place} = req.body;
         const parsedDate = new Date(date);
         const money = await Money.findById(req.user.moneyID);
-        money.items.push({date, category, value, label});
+        money.items.push({date, category, value, label, place});
         money.accounts[0].value += value;
         if(new Date().getMonth() === parsedDate.getMonth()) {
-            if(category) {
+            if(category && value < 0) {
                 try{
                     money.budget.categories.find(el => el.label == category).spent -= value;
                 } catch {
