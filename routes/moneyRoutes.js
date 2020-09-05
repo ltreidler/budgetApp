@@ -24,6 +24,12 @@ const updateThisMonth = async (moneyID) => {
 }
 
 module.exports = (app) => {
+
+    app.post('/api/editProfile', async (req, res) => {
+        console.log(req.body);
+        const money = await Money.findById(req.user.moneyID);
+        
+    })
     
     app.post('/api/newItem', async (req, res) => {
         //receives label, date, category, value
@@ -86,18 +92,14 @@ module.exports = (app) => {
     })
 
 
-    app.get('/api/clearMoneys', async (req, res) => {
-        await Money.deleteMany({});
-        console.log('deleted moneys');
-        res.redirect('/');
+    app.get('/api/clearData', async (req, res) => {
+        if(process.env.NODE_ENV != 'production'){
+            await Money.deleteMany({});
+            await User.deleteMany({});
+            res.redirect('/');
+        }
+        
     });
-
-    app.get('/api/clearUsers', async (req, res) => {
-        await User.deleteMany({});
-        console.log('deleted users');
-        res.redirect('/');
-    });
-
 
     app.get('/api/money', async (req, res) => {
         //only call this is the user exists

@@ -40,3 +40,8 @@ export const editItem = (item) => async (dispatch) => {
     const res = await axios.post('/api/editItem', item);
     dispatch({type: FETCH_MONEY, payload: res.data});
 }
+
+export const editProfile = ({accountValue}) => async (dispatch) => {
+    const res = await axios.post('/api/editProfile', accountValue);
+    
+}
