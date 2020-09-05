@@ -35,3 +35,8 @@ export const createCategory = (newCategory) => async (dispatch) => {
     const res = await axios.post('/api/createCategory', newCategory);
     dispatch({type: FETCH_MONEY, payload: res.data});
 }
+
+export const editItem = (item) => async (dispatch) => {
+    const res = await axios.post('/api/editItem', item);
+    dispatch({type: FETCH_MONEY, payload: res.data});
+}

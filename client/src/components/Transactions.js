@@ -2,9 +2,22 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
+import Popup from 'reactjs-popup';
+import * as actions from '../actions';
  
 class Transactions extends Component {
    
+    state = {
+        label: "",
+        value: "",
+        place: "",
+        id: ""
+    }
+
+    postEdit(){
+        this.props.editItem(this.state);
+    }
+
    renderTransactions() {
        //choose color based on category
             //go through categories and get the array of label, color
@@ -13,7 +26,7 @@ class Transactions extends Component {
         const {money} = this.props;
         const colorArray = money.budget.categories.map(({color, label}) => {return {color, label}});
 
-        const markup = money.items.map(({label, date, category, value, place}) => {
+        const markup = money.items.map(({label, date, category, value, place, _id}) => {
             if(label && date && value) {
                 let color = "orange";
                 console.log(category);
@@ -26,7 +39,21 @@ class Transactions extends Component {
                 if(!category) {
                     color = "green";
                 }
-                return this.transaction(color, label, value, date, category, place);
+
+                return (
+                    <Popup trigger={this.transaction(color, label, value, date, category, place)}
+                            modal
+                            closeOnDocumentClick
+                            onOpen={() => this.setState({id: _id})}
+                            onClose={() => this.postEdit()}>
+                            <label htmlFor="label">Name</label>
+                            <input name="label" type="text" defaultValue={label} onChange={({target: {value}}) => this.state.label = value}></input> 
+                            <label htmlFor="value">Value</label>
+                            <input name="value" type="number" defaultValue={value} onChange={({target: {value}}) => this.state.value = value}></input> 
+                            <label htmlFor="place">Place</label>
+                            <input name="place" type="text" defaultValue={place} onChange={({target: {value}}) => this.state.place = value}></input>
+                    </Popup>
+                    );
             }
         });
         return markup;
@@ -66,10 +93,11 @@ class Transactions extends Component {
         )
         
    }
+
 }
 
 function mapStateToProps({user, money}) {
     return {user, money};
 }
  
-export default connect(mapStateToProps)(Transactions);
+export default connect(mapStateToProps, actions)(Transactions);

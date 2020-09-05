@@ -51,6 +51,40 @@ module.exports = (app) => {
         
     })
 
+    app.post('/api/editItem', async (req, res) => {
+        const {label, value, place, id} = req.body;
+        const money = await Money.findById(req.user.moneyID);
+        const item = money.items.find(item => item._id == id);
+
+        console.log(req.body);
+        label ? item.label = label : null;
+        place ? item.place = place : null;
+
+        const date = new Date(item.date);
+
+        if(value) {
+            const valChange = value - item.value;
+            money.accounts[0].value += valChange;
+            if(new Date().getMonth() == date.getMonth()) {
+                if(value < 0) {
+                    try{
+                        console.log(valChange);
+                        money.budget.categories.find(el => el.label == item.category).spent -= valChange;
+                    } catch {
+                        money.budget.categories.find(el => el.label == 'Misc').spent -= valChange;
+                    }
+                    money.spentThisMonth -= valChange;
+                } else {
+                    money.earnedThisMonth += valChange;
+                }
+            }
+            item.value = value;
+        }
+        money.save();
+        
+        res.send(money);
+    })
+
 
     app.get('/api/clearMoneys', async (req, res) => {
         await Money.deleteMany({});
