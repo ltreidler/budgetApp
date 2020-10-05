@@ -11,13 +11,17 @@ const updateThisMonth = async (moneyID) => {
         money.earnedThisMonth += value;
     })
     _.each(money.items, ({category, value, date}) => {
-        if(date.getMonth() == new Date.getMonth()){
-            if(category) {
-                money.budget.categories.find(el => el.label == category).spent -= value;
-                money.spentThisMonth -= value;
-            } else {
-                money.earnedThisMonth += value;
+        try {
+            if(date.getMonth() == new Date.getMonth()){
+                if(category) {
+                    money.budget.categories.find(el => el.label == category).spent -= value;
+                    money.spentThisMonth -= value;
+                } else {
+                    money.earnedThisMonth += value;
+                }
             }
+        } catch (err) {
+            console.log('error: '+err);
         }
     })
     money.save();
