@@ -10,9 +10,11 @@ const updateThisMonth = async (moneyID) => {
     const money = await Money.findById(moneyID);
     money.earnedThisMonth = 0;
     money.spentThisMonth = 0;
-    _.each(money.budget.categories, ({spent}) => {
-        spent = 0;
+    _.each(money.budget.categories, ({spent, label, _id}) => {
+        money.budget.categories.find(el => el.label == label).spent = 0;
+        console.log('Updated '+label);
     });
+    console.log(money.budget.categories);
     // _.each(money.incomes, ({value}) => {
     //     money.earnedThisMonth += value;
     // })
@@ -27,11 +29,15 @@ const updateThisMonth = async (moneyID) => {
                     money.earnedThisMonth += value;
                 }
             }
+            console.log(money.budget.categories);
         } catch (err) {
             console.log('error: '+err);
         }
     })
+    money.dateLastOpened = new Date();
+    const newMoney = money;
     money.save();
+    return newMoney;
 }
 
 module.exports = (app) => {
@@ -98,8 +104,6 @@ module.exports = (app) => {
             item.value = value;
         }
         money.save();
-        
-        res.send(money);
     })
 
 
@@ -121,11 +125,11 @@ module.exports = (app) => {
         const today = new Date();
         if(money) {
             if(money.dateLastOpened.getMonth() != today.getMonth()){
-                await updateThisMonth(money._id);
+                const newMoney = await updateThisMonth(money._id);
+                res.send(newMoney);
+            } else {
+                res.send(money);
             }
-            money.dateLastOpened = new Date();
-            money.save();
-            res.send(money);
         } else {
             //if the money doesn't exist, that means the user is new
             res.send(false);
