@@ -6,18 +6,20 @@ const User = mongoose.model('User');
 const Money = mongoose.model('Money');
 
 const updateThisMonth = async (moneyID) => {
+    console.log('Updating money');
     const money = await Money.findById(moneyID);
     money.earnedThisMonth = 0;
     money.spentThisMonth = 0;
     _.each(money.budget.categories, ({spent}) => {
         spent = 0;
     });
-    _.each(money.incomes, ({value}) => {
-        money.earnedThisMonth += value;
-    })
+    // _.each(money.incomes, ({value}) => {
+    //     money.earnedThisMonth += value;
+    // })
     _.each(money.items, ({category, value, date}) => {
         try {
-            if(date.getMonth() == new Date.getMonth()){
+            const today = new Date();
+            if(date.getMonth() == today.getMonth()){
                 if(category) {
                     money.budget.categories.find(el => el.label == category).spent -= value;
                     money.spentThisMonth -= value;
@@ -116,9 +118,9 @@ module.exports = (app) => {
         //find the corresponding money and send it back
         const { moneyID: money } = await User.findById(_id)
             .populate('moneyID');
-
+        const today = new Date();
         if(money) {
-            if(money.dateLastOpened.getMonth() != new Date().getMonth()){
+            if(money.dateLastOpened.getMonth() != today.getMonth()){
                 await updateThisMonth(money._id);
             }
             money.dateLastOpened = new Date();
