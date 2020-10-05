@@ -7,6 +7,11 @@ const Money = mongoose.model('Money');
 
 const updateThisMonth = async (moneyID) => {
     const money = await Money.findById(moneyID);
+    money.earnedThisMonth = 0;
+    money.spentThisMonth = 0;
+    _.each(money.budget.categories, ({spent}) => {
+        spent = 0;
+    });
     _.each(money.incomes, ({value}) => {
         money.earnedThisMonth += value;
     })
