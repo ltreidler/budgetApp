@@ -42,6 +42,10 @@ export const editItem = (item) => async (dispatch) => {
 }
 
 export const editProfile = ({accountValue}) => async (dispatch) => {
-    const res = await axios.post('/api/editProfile', accountValue);
-    
+    const res = await axios.post('/api/editProfile', accountValue);  
+}
+
+export const resortItems = () => async (dispatch) => {
+    const res = await axios.get('/api/resortItems');
+    dispatch({type: FETCH_MONEY, payload: res.data});
 }

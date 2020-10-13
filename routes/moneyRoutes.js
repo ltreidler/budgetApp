@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 require('../models/Money');
+const insertNewItem = require('../middlewares/insertNewItem');
+const resortItems = require('../middlewares/resortItems');
 const _ = require('lodash');
 
 const User = mongoose.model('User');
@@ -21,7 +23,7 @@ const updateThisMonth = async (moneyID) => {
     _.each(money.items, ({category, value, date}) => {
         try {
             const today = new Date();
-            if(date.getMonth() == today.getMonth()){
+            if((date.getMonth() == today.getMonth()) && (today.getFullYear() === date.getFullYear())){
                 if(category) {
                     money.budget.categories.find(el => el.label == category).spent -= value;
                     money.spentThisMonth -= value;
@@ -54,9 +56,10 @@ module.exports = (app) => {
         const {date, category, value, label, place} = req.body;
         const parsedDate = new Date(date);
         const money = await Money.findById(req.user.moneyID);
-        money.items.push({date, category, value, label, place});
+        newItemArray = insertNewItem(date, category, value, label, place, money.items);
+        money.items = newItemArray;
         money.accounts[0].value += value;
-        if(new Date().getMonth() === parsedDate.getMonth()) {
+        if((new Date().getMonth() === parsedDate.getMonth()) && (new Date().getFullYear() === parsedDate.getFullYear())) {
             if(category && value < 0) {
                 try{
                     money.budget.categories.find(el => el.label == category).spent -= value;
@@ -173,6 +176,17 @@ module.exports = (app) => {
         }
         
     });
+
+    app.get('/api/resortItems', async (req,res) => {
+        //only call this is the user exists
+        const {moneyID} = req.user;
+        //find the corresponding money and send it back
+        const money = await Money.findById(moneyID);
+            //need to make sure thisMonth checks the year
+        money.items = resortItems(money.items);
+        money.save()
+        res.send(money);
+    })
 }
 
 

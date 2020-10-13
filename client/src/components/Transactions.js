@@ -29,8 +29,10 @@ class Transactions extends Component {
         const markup = money.items.map(({label, date, category, value, place, _id}) => {
             if(label && date && value) {
                 let color = "orange";
-                console.log(category);
-                console.log(category);
+
+                //goes through color array
+                //if the color element's category label matches the category of the item
+                //then set the color of the item to the color of the category
                 _.each(colorArray, el => {
                     if(el.label == category) {
                         color = el.color;
@@ -88,7 +90,7 @@ class Transactions extends Component {
                             {this.renderTransactions()}
                         </tbody>
                     </table>
-                
+                <button className="resort" onClick={this.props.resortItems}>RESORT</button>
             </div>
         )
         
